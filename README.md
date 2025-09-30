@@ -71,7 +71,6 @@ erDiagram
         VARCHAR zipcode
         VARCHAR phone
         VARCHAR status
-        JSON financial_data
         INTEGER risk_score
         TIMESTAMP created_at
         TIMESTAMP updated_at
