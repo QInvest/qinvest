@@ -27,6 +27,7 @@ erDiagram
     USERS ||--o{ CREDIT_REQUESTS : "realiza"
     USERS ||--o{ INVESTMENTS : "realiza"
     USERS ||--o{ NOTIFICATIONS : "recebe"
+    USERS ||--o{ COMPANIES : "possui"
     WALLETS ||--o{ TRANSACTIONS : "registra"
     CREDIT_REQUESTS ||--o{ INVESTMENTS : "recebe"
     INVESTMENTS ||--o{ REPAYMENTS : "gera"
@@ -35,8 +36,12 @@ erDiagram
         UUID user_id PK
         VARCHAR name
         VARCHAR email
+        VARCHAR cpf
+        VARCHAR phone
         VARCHAR type
-        INTEGER score
+        VARCHAR status
+        DATE birth_date
+        BOOLEAN kyc_verified
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -46,7 +51,30 @@ erDiagram
         UUID user_id FK
         INTEGER value
         TIMESTAMP calculated_at
-    }
+    }
+
+    entity COMPANIES {
+        UUID company_id PK
+        UUID user_id FK
+        VARCHAR company_name
+        VARCHAR cnpj
+        VARCHAR cnae
+        VARCHAR business_sector
+        BIGINT annual_revenue
+        INTEGER employees_count
+        DATE founded_date
+        VARCHAR legal_nature
+        VARCHAR address
+        VARCHAR city
+        VARCHAR state
+        VARCHAR zipcode
+        VARCHAR phone
+        VARCHAR status
+        JSON financial_data
+        INTEGER risk_score
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
 
     entity WALLETS {
         UUID wallet_id PK
@@ -69,6 +97,7 @@ erDiagram
     entity CREDIT_REQUESTS {
         UUID request_id PK
         UUID user_id FK
+        UUID company_id FK
         INTEGER amount
         VARCHAR status
         TIMESTAMP created_at
@@ -100,7 +129,7 @@ erDiagram
     }
 ```
 
-
+```
 
 ## 4. Estrutura de Backend (FastAPI)
 
@@ -110,6 +139,7 @@ A solução de backend será desenvolvida utilizando FastAPI, proporcionando uma
 
 *   **/auth:** Registro/login, integração Gov.br, KYC (biometria).
 *   **/wallet:** Depósitos (Pix), saques, histórico.
+*   **/companies:** Cadastro e gestão de empresas (PMEs), validação de CNPJ, análise de dados empresariais.
 *   **/credits:** Solicitações de crédito das PMEs.
 *   **/investments:** Lista de oportunidades, aportes.
 *   **/score:** Cálculo de risco e juros.
