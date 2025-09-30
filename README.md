@@ -28,6 +28,7 @@ erDiagram
     USERS ||--o{ INVESTMENTS : "realiza"
     USERS ||--o{ NOTIFICATIONS : "recebe"
     USERS ||--o{ COMPANIES : "possui"
+    COMPANIES ||--o{ CREDIT_REQUESTS : "solicita"
     WALLETS ||--o{ TRANSACTIONS : "registra"
     CREDIT_REQUESTS ||--o{ INVESTMENTS : "recebe"
     INVESTMENTS ||--o{ REPAYMENTS : "gera"
