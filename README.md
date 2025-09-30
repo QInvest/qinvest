@@ -370,7 +370,7 @@ O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliaç
 
 ### Modelo de Dados
 
-A tabela `users` terá campo adicional:
+A tabela `USER` terá score da tabela `USER_SCORES`:
 
 `score INT -- nota de risco final (0–1000)`
 
