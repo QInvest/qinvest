@@ -23,6 +23,7 @@ Para suportar as operações da plataforma Qinvest, propomos uma estrutura de ba
 ```mermaid
 erDiagram
     USERS ||--o{ WALLETS : "possui"
+    USERS ||--o{ USER_SCORES : "possui"
     USERS ||--o{ CREDIT_REQUESTS : "realiza"
     USERS ||--o{ INVESTMENTS : "realiza"
     USERS ||--o{ NOTIFICATIONS : "recebe"
@@ -345,7 +346,7 @@ A tabela `credit_requests` guardará o status da Qi Tech:
 
 `qi_status VARCHAR(50) -- automatically_approved, reproved, etc.`
 
-### Exemplo de Integração (pseudo-código)
+### Exemplo de Integração
 
 ```python
 # services/score_service.py
