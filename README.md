@@ -22,111 +22,115 @@ Para suportar as operações da plataforma Qinvest, propomos uma estrutura de ba
 
 ```mermaid
 erDiagram
-    USERS ||--o{ WALLETS : "possui"
-    USERS ||--o{ USER_SCORES : "possui"
-    USERS ||--o{ CREDIT_REQUESTS : "realiza"
-    USERS ||--o{ INVESTMENTS : "realiza"
-    USERS ||--o{ NOTIFICATIONS : "recebe"
-    USERS ||--o{ COMPANIES : "possui"
-    COMPANIES ||--o{ CREDIT_REQUESTS : "solicita"
-    WALLETS ||--o{ TRANSACTIONS : "registra"
-    CREDIT_REQUESTS ||--o{ INVESTMENTS : "recebe"
-    INVESTMENTS ||--o{ REPAYMENTS : "gera"
+	direction TB
+	USERS {
+		UUID user_id PK ""  
+		VARCHAR name  ""  
+		VARCHAR email  ""  
+		VARCHAR cpf  ""  
+		VARCHAR phone  ""  
+		VARCHAR type  ""  
+		VARCHAR status  ""  
+		DATE birth_date  ""  
+		BOOLEAN kyc_verified  ""  
+		TIMESTAMP created_at  ""  
+		TIMESTAMP updated_at  ""  
+	}
 
-    entity USERS {
-        UUID user_id PK
-        VARCHAR name
-        VARCHAR email
-        VARCHAR cpf
-        VARCHAR phone
-        VARCHAR type
-        VARCHAR status
-        DATE birth_date
-        BOOLEAN kyc_verified
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
+	WALLETS {
+		UUID wallet_id PK ""  
+		UUID user_id FK ""  
+		INTEGER balance  ""  
+		VARCHAR currency  ""  
+		TIMESTAMP created_at  ""  
+		TIMESTAMP updated_at  ""  
+	}
 
-    entity USER_SCORES {
-        UUID score_id PK
-        UUID user_id FK
-        INTEGER value
-        TIMESTAMP calculated_at
-    }
+	USER_SCORES {
+		UUID score_id PK ""  
+		UUID user_id FK ""  
+		INTEGER value  ""  
+		TIMESTAMP calculated_at  ""  
+	}
 
-    entity COMPANIES {
-        UUID company_id PK
-        UUID user_id FK
-        VARCHAR company_name
-        VARCHAR cnpj
-        VARCHAR cnae
-        VARCHAR business_sector
-        BIGINT annual_revenue
-        INTEGER employees_count
-        DATE founded_date
-        VARCHAR legal_nature
-        VARCHAR address
-        VARCHAR city
-        VARCHAR state
-        VARCHAR zipcode
-        VARCHAR phone
-        VARCHAR status
-        INTEGER risk_score
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
+	CREDIT_REQUESTS {
+		UUID request_id PK ""  
+		UUID user_id FK ""  
+		UUID company_id FK ""  
+		INTEGER amount  ""  
+		VARCHAR status  ""  
+		TIMESTAMP created_at  ""  
+	}
 
-    entity WALLETS {
-        UUID wallet_id PK
-        UUID user_id FK
-        INTEGER balance
-        VARCHAR currency
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
+	INVESTMENTS {
+		UUID investment_id PK ""  
+		UUID user_id FK ""  
+		UUID request_id FK ""  
+		INTEGER amount  ""  
+		TIMESTAMP created_at  ""  
+	}
 
-    entity TRANSACTIONS {
-        UUID transaction_id PK
-        UUID wallet_id FK
-        INTEGER amount
-        VARCHAR type
-        VARCHAR status
-        TIMESTAMP created_at
-    }
+	NOTIFICATIONS {
+		UUID notification_id PK ""  
+		UUID user_id FK ""  
+		VARCHAR message  ""  
+		BOOLEAN is_read  ""  
+		TIMESTAMP created_at  ""  
+	}
 
-    entity CREDIT_REQUESTS {
-        UUID request_id PK
-        UUID user_id FK
-        UUID company_id FK
-        INTEGER amount
-        VARCHAR status
-        TIMESTAMP created_at
-    }
+	COMPANIES {
+		UUID company_id PK ""  
+		UUID user_id FK ""  
+		VARCHAR company_name  ""  
+		VARCHAR cnpj  ""  
+		VARCHAR cnae  ""  
+		VARCHAR business_sector  ""  
+		BIGINT annual_revenue  ""  
+		INTEGER employees_count  ""  
+		DATE founded_date  ""  
+		VARCHAR legal_nature  ""  
+		VARCHAR address  ""  
+		VARCHAR city  ""  
+		VARCHAR state  ""  
+		VARCHAR zipcode  ""  
+		VARCHAR phone  ""  
+		VARCHAR status  ""  
+		JSON financial_data  ""  
+		INTEGER risk_score  ""  
+		TIMESTAMP created_at  ""  
+		TIMESTAMP updated_at  ""  
+	}
 
-    entity INVESTMENTS {
-        UUID investment_id PK
-        UUID user_id FK
-        UUID request_id FK
-        INTEGER amount
-        TIMESTAMP created_at
-    }
+	TRANSACTIONS {
+		UUID transaction_id PK ""  
+		UUID wallet_id FK ""  
+		INTEGER amount  ""  
+		VARCHAR type  ""  
+		VARCHAR status  ""  
+		TIMESTAMP created_at  ""  
+	}
 
-    entity REPAYMENTS {
-        UUID repayment_id PK
-        UUID investment_id FK
-        INTEGER amount
-        DATE due_date
-        VARCHAR status
-        TIMESTAMP created_at
-    }
+	REPAYMENTS {
+		UUID repayment_id PK ""  
+		UUID investment_id FK ""  
+		INTEGER amount  ""  
+		DATE due_date  ""  
+		VARCHAR status  ""  
+		TIMESTAMP created_at  ""  
+	}
 
-    entity NOTIFICATIONS {
-        UUID notification_id PK
-        UUID user_id FK
-        VARCHAR message
-        BOOLEAN is_read
-        TIMESTAMP created_at
-    }
+	USERS||--o{WALLETS:"possui"
+	USERS||--o{USER_SCORES:"possui"
+	USERS||--o{CREDIT_REQUESTS:"realiza"
+	USERS||--o{INVESTMENTS:"realiza"
+	USERS||--o{NOTIFICATIONS:"recebe"
+	USERS||--o{COMPANIES:"possui"
+	COMPANIES||--o{CREDIT_REQUESTS:"solicita"
+	WALLETS||--o{TRANSACTIONS:"registra"
+	CREDIT_REQUESTS||--o{INVESTMENTS:"recebe"
+	INVESTMENTS||--o{REPAYMENTS:"gera"
+
+
 ```
 
 ## 4. Estrutura de Backend (FastAPI)
