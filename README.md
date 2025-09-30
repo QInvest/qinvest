@@ -129,8 +129,6 @@ erDiagram
     }
 ```
 
-```
-
 ## 4. Estrutura de Backend (FastAPI)
 
 A solução de backend será desenvolvida utilizando FastAPI, proporcionando uma base sólida para um desenvolvimento escalável e de fácil manutenção. A arquitetura seguirá o padrão de microsserviços, com a organização em módulos e uma estrutura de pastas bem definida.
