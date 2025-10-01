@@ -318,7 +318,7 @@ O fluxo de investimento e crédito na plataforma Qinvest pode ser detalhado em d
 
 1.  PME solicita a criação de uma captação
 2.  Backend solicita o envio do contrato à API CertifiedQI à PME
-3.  PME assina o contrato assina o contrato
+3.  PME assina o contrato
 4.  Backend cria evento captação e disponibiliza na plataforma
 
 ### Fluxo de Investimento
