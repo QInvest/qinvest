@@ -389,7 +389,7 @@ O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliaç
 4.  O backend Qinvest interpreta a resposta e aplica ajustes internos:
     *   Exemplo: PME em setor de alto risco recebe penalização.
     *   Exemplo: histórico interno positivo da empresa gera bônus no score.
-5.  O score final (0–1000) é calculado e armazenado na tabela `users`.
+5.  O score final (0–1000) é calculado e armazenado na tabela `SCORES`.
 6.  O score é exibido no dashboard e usado para definir a taxa de juros da operação de captação.
 
 ### Modelo de Dados
