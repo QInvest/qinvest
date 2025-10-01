@@ -46,11 +46,14 @@ erDiagram
 		TIMESTAMP updated_at  ""  
 	}
 
-	USER_SCORES {
+	SCORES {
 		UUID score_id PK ""  
 		UUID user_id FK ""  
+		UUID company_id FK ""  
 		INTEGER value  ""  
+		VARCHAR score_type  ""  
 		TIMESTAMP calculated_at  ""  
+		TIMESTAMP updated_at  ""  
 	}
 
 	CREDIT_REQUESTS {
@@ -120,12 +123,13 @@ erDiagram
 	}
 
 	USERS||--o{WALLETS:"possui"
-	USERS||--o{USER_SCORES:"possui"
+	USERS||--o{SCORES:"possui"
 	USERS||--o{CREDIT_REQUESTS:"realiza"
 	USERS||--o{INVESTMENTS:"realiza"
 	USERS||--o{NOTIFICATIONS:"recebe"
 	USERS||--o{COMPANIES:"possui"
 	COMPANIES||--o{CREDIT_REQUESTS:"solicita"
+	COMPANIES||--o{SCORES:"possui"
 	WALLETS||--o{TRANSACTIONS:"registra"
 	CREDIT_REQUESTS||--o{INVESTMENTS:"recebe"
 	INVESTMENTS||--o{REPAYMENTS:"gera"
@@ -196,11 +200,31 @@ Criar um sistema que calcula uma **nota de risco (0–1000)** para **PMEs e empr
 
 **Modelo de Regras Fixas Inicial (Exemplo):**
 
-*   PF empresária com idade > 25 e renda > R$ 3.000: +200 pontos.
-*   PME com faturamento > R$ 500.000/ano e tempo de atividade > 2 anos: +300 pontos.
-*   Penalizações serão aplicadas em caso de dívidas ativas ou baixa renda/faturamento da empresa solicitante.
+*Score Base: 500 pontos*
 
-**Persistência:** O score calculado será salvo na tabela `USER_SCORES` (campo `value` do tipo `INT`).
+**Bonificações por Perfil Empresarial:**
+*   Startup/PME com faturamento anual entre R$ 120K - R$ 1.2M e tempo > 1 ano: +120 pontos
+*   PME consolidada com faturamento > R$ 1.2M/ano e tempo > 3 anos: +200 pontos
+*   Setor de baixo risco (tecnologia, saúde, educação): +80 pontos
+*   Margem EBITDA > 10%: +100 pontos
+*   Histórico de pontualidade fiscal (sem pendências na Receita): +60 pontos
+*   Produto/serviço com recorrência comprovada: +70 pontos
+
+**Bonificações para PF Empresária:**
+*   Idade entre 25-50 anos e renda comprovada > R$ 4.000: +80 pontos
+*   Experiência no setor > 2 anos: +60 pontos
+*   Score positivo no SPC/Serasa: +50 pontos
+*   Formação superior relacionada ao negócio: +40 pontos
+
+**Penalizações:**
+*   Setor de alto risco (restaurantes, eventos, turismo): -120 pontos
+*   Dívidas ativas > R$ 15.000: -150 pontos
+*   Faturamento decrescente nos últimos 12 meses: -80 pontos
+*   Margem EBITDA negativa: -140 pontos
+*   Empresa com menos de 6 meses: -180 pontos
+*   Modelo de negócio não comprovado/MVP: -60 pontos
+
+**Persistência:** O score calculado será salvo na tabela `SCORES` (campo `value` do tipo `INT`), associado tanto ao usuário quanto à empresa quando aplicável.
 
 **Evolução Futura:**
 
@@ -370,9 +394,19 @@ O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliaç
 
 ### Modelo de Dados
 
-A tabela `USER` terá score da tabela `USER_SCORES`:
+A tabela `SCORES` armazenará os scores calculados:
 
-`score INT -- nota de risco final (0–1000)`
+```sql
+SCORES (
+    score_id UUID PRIMARY KEY,
+    user_id UUID FOREIGN KEY REFERENCES USERS(user_id),
+    company_id UUID FOREIGN KEY REFERENCES COMPANIES(company_id),
+    value INT, -- nota de risco final (0–1000)
+    score_type VARCHAR(50), -- 'credit_request', 'company_analysis', etc.
+    calculated_at TIMESTAMP,
+    updated_at TIMESTAMP
+)
+```
 
 A tabela `credit_requests` guardará o status da Qi Tech:
 
