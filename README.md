@@ -144,7 +144,7 @@ A solução de backend será desenvolvida utilizando FastAPI, proporcionando uma
 *   **/companies:** Cadastro e gestão de empresas (PMEs), validação de CNPJ, análise de dados empresariais.
 *   **/credits:** Solicitações de crédito das PMEs.
 *   **/investments:** Lista de oportunidades, aportes.
-*   **/score:** Cálculo de risco e juros.
+*   **/score:** Cálculo de risco de PMEs solicitantes e precificação de juros.
 *   **/payments:** Liquidação, integração Pix via Qi Tech, webhooks.
 *   **/notifications:** Alertas e feedback.
 *   **/admin:** Painel administrativo.
@@ -162,18 +162,18 @@ Os serviços da Qi Tech consumidos pelo Qinvest, que se enquadram no modelo BaaS
 
 #### Objetivo
 
-Criar um sistema que calcula uma **nota de risco (0–1000)** para cada usuário (Pessoa Física ou Pessoa Jurídica), utilizada para a precificação dinâmica de juros. O sistema será inicialmente baseado em regras fixas simples, mas projetado para uma evolução futura para modelos de Machine Learning.
+Criar um sistema que calcula uma **nota de risco (0–1000)** para **PMEs e empresários que desejam solicitar crédito** (colocar sua empresa/projeto à venda para captação de recursos). O score é utilizado para a precificação dinâmica de juros oferecidos aos investidores. O sistema será inicialmente baseado em regras fixas simples, mas projetado para uma evolução futura para modelos de Machine Learning.
 
 #### Entradas de Dados
 
-**Pessoa Física (PF):**
+**Pessoa Física Empresária (PF) - Solicitante de Crédito:**
 
 *   Idade
 *   Renda declarada
 *   Histórico de pagamento (quando disponível)
 *   Validação documental (KYC)
 
-**Pessoa Jurídica (PJ):**
+**Pessoa Jurídica (PJ) - PME Solicitante de Crédito:**
 
 *   Faturamento
 *   DRE (Demonstração de Resultado)
@@ -189,16 +189,16 @@ Criar um sistema que calcula uma **nota de risco (0–1000)** para cada usuário
 
 #### Endpoints REST (FastAPI)
 
-*   `POST /score`: Recebe dados de PF/PJ e salva o score calculado.
-*   `GET /score/{user_id}`: Retorna o último score salvo de um usuário específico.
+*   `POST /score`: Recebe dados de PF/PJ solicitantes de crédito e salva o score calculado.
+*   `GET /score/{user_id}`: Retorna o último score salvo de um solicitante de crédito específico.
 
 #### Implementação Própria de Score
 
 **Modelo de Regras Fixas Inicial (Exemplo):**
 
-*   PF com idade > 25 e renda > R$ 3.000: +200 pontos.
-*   PJ com faturamento > R$ 500.000/ano e tempo de atividade > 2 anos: +300 pontos.
-*   Penalizações serão aplicadas em caso de dívidas ativas ou baixa renda/faturamento.
+*   PF empresária com idade > 25 e renda > R$ 3.000: +200 pontos.
+*   PME com faturamento > R$ 500.000/ano e tempo de atividade > 2 anos: +300 pontos.
+*   Penalizações serão aplicadas em caso de dívidas ativas ou baixa renda/faturamento da empresa solicitante.
 
 **Persistência:** O score calculado será salvo na tabela `USER_SCORES` (campo `value` do tipo `INT`).
 
@@ -349,14 +349,14 @@ O fluxo de investimento e crédito na plataforma Qinvest pode ser detalhado em d
 
 ### Visão Geral
 
-O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliação de risco de crédito de pessoas físicas (PF) e pessoas jurídicas (PJ). Essa análise será combinada com um motor de regras próprio (com possibilidade futura de machine learning) para gerar uma nota de score de 0 a 1000, usada na precificação de juros e exibição no dashboard.
+O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliação de risco de crédito de **PMEs e empresários que solicitam captação de recursos** (pessoas físicas empresárias e pessoas jurídicas). Essa análise será combinada com um motor de regras próprio (com possibilidade futura de machine learning) para gerar uma nota de score de 0 a 1000, usada na precificação de juros oferecidos aos investidores e exibição no dashboard.
 
 ### Fluxo da Integração
 
-1.  O usuário (PF ou PJ) realiza uma solicitação de crédito no Qinvest.
+1.  A **PME ou empresário** realiza uma solicitação de crédito/captação no Qinvest.
 2.  O backend Qinvest (FastAPI) envia os dados necessários para a API Qi Tech `/credit_analysis`:
-    *   PF: CPF, dados cadastrais, renda, histórico.
-    *   PJ: CNPJ, DRE, faturamento, setor.
+    *   PF empresária: CPF, dados cadastrais, renda, histórico.
+    *   PME (PJ): CNPJ, DRE, faturamento, setor.
 3.  A Qi Tech retorna um status de análise:
     *   `automatically_approved`
     *   `automatically_reproved`
@@ -364,9 +364,9 @@ O Qinvest utilizará a API de Credit Analysis da Qi Tech como base para avaliaç
     *   `awaiting_documents`
 4.  O backend Qinvest interpreta a resposta e aplica ajustes internos:
     *   Exemplo: PME em setor de alto risco recebe penalização.
-    *   Exemplo: histórico interno positivo gera bônus no score.
+    *   Exemplo: histórico interno positivo da empresa gera bônus no score.
 5.  O score final (0–1000) é calculado e armazenado na tabela `users`.
-6.  O score é exibido no dashboard e usado para definir a taxa de juros da operação.
+6.  O score é exibido no dashboard e usado para definir a taxa de juros da operação de captação.
 
 ### Modelo de Dados
 
