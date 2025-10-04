@@ -61,14 +61,18 @@ erDiagram
 		UUID company_id FK ""  
 		INTEGER amount  ""  
 		VARCHAR status  ""  
+		DECIMAL interest_rate  ""  
+		DATE goal_deadline  ""  
 		TIMESTAMP created_at  ""  
+		TIMESTAMP approved_at  ""  
 	}
 
 	INVESTMENTS {
 		UUID investment_id PK ""  
 		UUID user_id FK ""  
 		UUID request_id FK ""  
-		INTEGER amount  ""   
+		INTEGER amount  ""  
+		DECIMAL interest_rate  ""  
 		TIMESTAMP created_at  ""  
 	}
 
