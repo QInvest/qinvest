@@ -40,7 +40,8 @@ erDiagram
 	WALLETS {
 		UUID wallet_id PK ""  
 		UUID user_id FK ""  
-		INTEGER balance  ""  
+		INTEGER balance  "" 
+		VARCHAR type "" 
 		VARCHAR currency  ""  
 		TIMESTAMP created_at  ""  
 		TIMESTAMP updated_at  ""  
@@ -70,10 +71,10 @@ erDiagram
 	OPPORTUNITIES {
 		UUID opportunity_id PK ""  
 		UUID request_id FK ""  
-		INTEGER target_amount  ""  
-		INTEGER accumulated_amount  ""  
+		INTEGER total_quota  ""  
+		INTEGER accumulated_quota  ""  
 		INTEGER return_period  ""  
-		DECIMAL fixed_quota  ""  
+		INTEGER fixed_quota  ""  
 		DECIMAL interest_rate  ""  
 		VARCHAR status  ""  
 		BOOLEAN goal_reached  ""  
@@ -85,7 +86,7 @@ erDiagram
 		UUID investment_id PK ""  
 		UUID user_id FK ""  
 		UUID opportunity_id FK ""  
-		INTEGER amount  ""    
+		INTEGER qtd_quota ""    
 		TIMESTAMP created_at  ""  
 	}
 
