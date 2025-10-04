@@ -62,17 +62,30 @@ erDiagram
 		INTEGER amount  ""  
 		VARCHAR status  ""  
 		DECIMAL interest_rate  ""  
-		DATE goal_deadline  ""  
+		INTEGER period  ""  
 		TIMESTAMP created_at  ""  
 		TIMESTAMP approved_at  ""  
+	}
+
+	OPPORTUNITIES {
+		UUID opportunity_id PK ""  
+		UUID request_id FK ""  
+		INTEGER target_amount  ""  
+		INTEGER accumulated_amount  ""  
+		INTEGER return_period  ""  
+		DECIMAL fixed_quota  ""  
+		DECIMAL interest_rate  ""  
+		VARCHAR status  ""  
+		BOOLEAN goal_reached  ""  
+		TIMESTAMP created_at  ""  
+		TIMESTAMP closed_at  ""  
 	}
 
 	INVESTMENTS {
 		UUID investment_id PK ""  
 		UUID user_id FK ""  
-		UUID request_id FK ""  
-		INTEGER amount  ""  
-		DECIMAL interest_rate  ""  
+		UUID opportunity_id FK ""  
+		INTEGER amount  ""    
 		TIMESTAMP created_at  ""  
 	}
 
@@ -124,7 +137,8 @@ erDiagram
 	COMPANIES||--o{CREDIT_REQUESTS:"solicita"
 	COMPANIES||--o{SCORES:"possui"
 	WALLETS||--o{TRANSACTIONS:"registra"
-	CREDIT_REQUESTS||--o{INVESTMENTS:"recebe"
+	CREDIT_REQUESTS||--o{OPPORTUNITIES:"gera"
+	OPPORTUNITIES||--o{INVESTMENTS:"recebe"
 	INVESTMENTS||--o{REPAYMENTS:"gera"
 
 
