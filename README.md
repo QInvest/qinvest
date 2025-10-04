@@ -48,7 +48,6 @@ erDiagram
 
 	SCORES {
 		UUID score_id PK ""  
-		UUID user_id FK ""  
 		UUID company_id FK ""  
 		INTEGER value  ""  
 		VARCHAR score_type  ""  
@@ -70,14 +69,7 @@ erDiagram
 		UUID user_id FK ""  
 		UUID request_id FK ""  
 		INTEGER amount  ""  
-		TIMESTAMP created_at  ""  
-	}
-
-	NOTIFICATIONS {
-		UUID notification_id PK ""  
-		UUID user_id FK ""  
-		VARCHAR message  ""  
-		BOOLEAN is_read  ""  
+		BOOLEAN goal_reached  ""  
 		TIMESTAMP created_at  ""  
 	}
 
@@ -123,10 +115,8 @@ erDiagram
 	}
 
 	USERS||--o{WALLETS:"possui"
-	USERS||--o{SCORES:"possui"
 	USERS||--o{CREDIT_REQUESTS:"realiza"
 	USERS||--o{INVESTMENTS:"realiza"
-	USERS||--o{NOTIFICATIONS:"recebe"
 	USERS||--o{COMPANIES:"possui"
 	COMPANIES||--o{CREDIT_REQUESTS:"solicita"
 	COMPANIES||--o{SCORES:"possui"
