@@ -124,11 +124,23 @@ erDiagram
 
 	REPAYMENTS {
 		UUID repayment_id PK ""  
-		UUID investment_id FK ""  
+		UUID opportunity_id FK ""  
 		INTEGER amount  ""  
 		DATE due_date  ""  
 		VARCHAR status  ""  
 		TIMESTAMP created_at  ""  
+	}
+
+	DISTRIBUTIONS {
+		UUID distribution_id PK ""  
+		UUID investment_id FK ""  
+		UUID repayment_id FK ""  
+		INTEGER amount  ""  
+		INTEGER principal_amount  ""  
+		INTEGER interest_amount  ""  
+		VARCHAR status  ""  
+		TIMESTAMP created_at  ""  
+		TIMESTAMP paid_at  ""  
 	}
 
 	USERS||--o{WALLETS:"possui"
@@ -140,7 +152,9 @@ erDiagram
 	WALLETS||--o{TRANSACTIONS:"registra"
 	CREDIT_REQUESTS||--o{OPPORTUNITIES:"gera"
 	OPPORTUNITIES||--o{INVESTMENTS:"recebe"
-	INVESTMENTS||--o{REPAYMENTS:"gera"
+	OPPORTUNITIES||--o{REPAYMENTS:"gera"
+	INVESTMENTS||--o{DISTRIBUTIONS:"recebe"
+	REPAYMENTS||--o{DISTRIBUTIONS:"distribui"
 
 
 ```
