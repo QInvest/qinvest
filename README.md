@@ -172,7 +172,6 @@ A solução de backend será desenvolvida utilizando FastAPI, proporcionando uma
 *   **/investments:** Lista de oportunidades, aportes.
 *   **/score:** Cálculo de risco de PMEs solicitantes e precificação de juros.
 *   **/payments:** Liquidação, integração Pix via Qi Tech, webhooks.
-*   **/notifications:** Alertas e feedback.
 *   **/admin:** Painel administrativo.
 
 ### Detalhando as Funcionalidades BaaS da Qi Tech Utilizadas
