@@ -68,8 +68,7 @@ erDiagram
 		UUID investment_id PK ""  
 		UUID user_id FK ""  
 		UUID request_id FK ""  
-		INTEGER amount  ""  
-		BOOLEAN goal_reached  ""  
+		INTEGER amount  ""   
 		TIMESTAMP created_at  ""  
 	}
 
