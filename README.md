@@ -1,8 +1,10 @@
 # Modelo de Projeto de Tecnologia: Solução de Investimentos P2P – Qinvest
 
-Repositório backend: https://github.com/QInvest/qinvest-backend.git
-Repositório frontend: https://github.com/QInvest/qinvest-frontend.git
-Repositório api de score e análise: https://github.com/QInvest/qinvest-score.git
+- Repositório backend: https://github.com/QInvest/qinvest-backend.git
+
+- Repositório frontend: https://github.com/QInvest/qinvest-frontend.git
+
+- Repositório api de score e análise: https://github.com/QInvest/qinvest-score.git
 
 ## 1. Contexto
 
