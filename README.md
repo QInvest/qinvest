@@ -1,5 +1,8 @@
 # Modelo de Projeto de Tecnologia: Solução de Investimentos P2P – Qinvest
 
+Repositório backend: https://github.com/QInvest/qinvest-backend.git
+Repositório frontend: https://github.com/QInvest/qinvest-frontend.git
+
 ## 1. Contexto
 
 O Qinvest é uma plataforma de investimentos P2P (peer-to-peer) que conecta PMEs em busca de crédito a investidores que procuram maior rentabilidade. A plataforma garante simplicidade, segurança e clareza, usando a API Qi Tech como **Backend as a Service (BaaS)** para operações de Pix, crédito e liquidações. 
@@ -468,17 +471,10 @@ def calculate_score(user_data):
 
 ## 8. Estratégia de Deploy
 
-Para o deploy da plataforma Qinvest, adotaremos uma abordagem em duas fases, visando otimizar custos e escalabilidade de acordo com a maturidade do projeto.
+### Deploy 
 
-### Deploy para MVP (Produto Mínimo Viável)
-
-*   **Backend (FastAPI):** Será hospedado no **Railway**, uma plataforma de deploy que oferece facilidade de uso e integração contínua para aplicações baseadas em contêineres.
+*   **Backend (FastAPI):** Será hospedado no **Google Cloud Run**, uma plataforma de deploy que oferece facilidade de uso e integração contínua para aplicações baseadas em contêineres.
 *   **Frontend (React/Next.js):** Será deployado na **Vercel**, conhecida por sua performance e otimização para aplicações Next.js, além de oferecer deploy contínuo a partir do repositório de código.
 *   **Banco de Dados (Supabase):** Utilizará o serviço gerenciado **Supabase**, que oferece uma solução robusta e escalável com funcionalidades adicionais como autenticação e APIs em tempo real.
 
-### Deploy para Escala
-
-À medida que a plataforma Qinvest crescer e demandar maior capacidade e flexibilidade, a estratégia de deploy será migrada para provedores de nuvem mais abrangentes.
-
-*   **Infraestrutura:** A migração será para **AWS (Amazon Web Services)** ou **GCP (Google Cloud Platform)**, que oferecem uma vasta gama de serviços para computação, banco de dados, rede e segurança, permitindo uma arquitetura de microserviços mais complexa e escalável, com balanceamento de carga, auto scaling e alta disponibilidade.
 
