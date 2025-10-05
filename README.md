@@ -457,7 +457,7 @@ Este diagrama ilustra os principais componentes da plataforma Qinvest e o fluxo 
 *   **Usuário (Investidor / PME):** Interage diretamente com o Frontend.
 *   **Frontend (React/Next.js):** A interface do usuário que se comunica com o Backend.
 *   **Backend (FastAPI):** O coração da aplicação, que gerencia a lógica de negócios e se conecta a outros serviços:
-    *   **Serviços de Backend:** Auth, Wallet, Credit, Investment, Score, Payment, Notification.
+    *   **Serviços de Backend:** Auth, Wallet, Credit, Investment, Score, Payment.
     *   **Banco de Dados (PostgreSQL via Supabase):** Armazena todos os dados transacionais e de usuário.
     *   **APIs Externas:** Integrações com serviços de terceiros como Receita Federal (PJ), Biometria/KYC e a API Qi Tech (para Pix, Crédito e Liquidação).
 
