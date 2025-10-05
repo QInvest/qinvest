@@ -2,6 +2,7 @@
 
 Repositório backend: https://github.com/QInvest/qinvest-backend.git
 Repositório frontend: https://github.com/QInvest/qinvest-frontend.git
+Repositório api de score e análise: https://github.com/QInvest/qinvest-score.git
 
 ## 1. Contexto
 
@@ -17,9 +18,41 @@ O objetivo é desenvolver uma plataforma que atenda a três públicos principais
 *   **Investidores:** Oferecer a possibilidade de investir em oportunidades segmentadas por risco, setor e retorno.
 *   **Plataforma:** Administrar a carteira virtual, os pagamentos, os investimentos e o matching entre as partes, com monitoramento em tempo real.
 
-## 3. Estrutura de Banco de Dados (Supabase)
+## 3. Estrutura de Banco de Dados
 
-Para suportar as operações da plataforma Qinvest, propomos uma estrutura de banco de dados relacional, utilizando **Postgres gerenciado pelo Supabase**, otimizada para transações financeiras, segurança e escalabilidade. As principais entidades e seus relacionamentos são detalhados abaixo, visando a integridade dos dados e a eficiência das operações.
+Para suportar as operações da plataforma Qinvest, utilizamos uma estrutura de banco de dados híbrida que combina **SQLModel com SQLite** para desenvolvimento local e **PostgreSQL gerenciado pelo Supabase** para produção. Esta abordagem oferece flexibilidade durante o desenvolvimento e escalabilidade em produção.
+
+### Tecnologias de Banco de Dados
+
+*   **SQLModel:** ORM moderno baseado no SQLAlchemy, utilizado para modelagem de dados e migrações.
+*   **SQLite:** Banco de dados leve e rápido para desenvolvimento e testes locais.
+*   **Supabase:** Plataforma Backend-as-a-Service com PostgreSQL para produção, oferecendo autenticação integrada, APIs em tempo real e painel administrativo.
+
+### Configuração de Desenvolvimento
+
+O projeto utiliza SQLModel para definir modelos de dados Python que são automaticamente sincronizados com o banco SQLite:
+
+```python
+# Exemplo de modelo SQLModel (app/models/)
+from sqlmodel import SQLModel, Field
+from typing import Optional
+from datetime import datetime
+
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str = Field(unique=True, index=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+```
+
+### Configuração de Produção (Supabase)
+
+Em produção, os dados são armazenados no PostgreSQL do Supabase com as seguintes características:
+
+*   **Autenticação integrada:** Gestão de usuários e sessões via Supabase Auth
+*   **APIs em tempo real:** Sincronização automática de dados entre clientes
+*   **Backup automático:** Segurança e recuperação de dados
+*   **Escalabilidade:** Recursos sob demanda conforme o crescimento da plataforma
 
 ### Diagrama de Entidade-Relacionamento (DER)
 
@@ -258,18 +291,42 @@ Criar um sistema que calcula uma **nota de risco (0–1000)** para **PMEs e empr
 ### Estrutura de Pastas
 
 ```
-📁 app/
-├── 📁 api/                     ── Rotas REST (auth, wallet, credits, investments, etc.)
-├── 📁 services/               ── Regras de negócio e lógica de aplicação
-├── 📁 integrations/           ── APIs externas (Qi Tech, Receita Federal, biometria)
-├── 📁 models/                 ── Schemas e modelos de banco
-├── 📁 db/                     ── Configuração e migrações do banco
-├── 📁 core/                   ── Configurações centrais (security, config)
-├── 📁 tests/                  ── Testes unitários, integração e E2E
-├── 📄 main.py                 ── Entrada principal FastAPI
-├── 📄 requirements.txt        ── Dependências Python
-├── 📄 .env.example           ── Variáveis de ambiente
-└── 📄 docker-compose.yml     ── Orquestração local
+📁 qinvest-backend/
+├── 📁 app/                           ── Código principal da aplicação
+│   ├── 📁 api/                       ── Módulos das APIs organizados por domínio
+│   │   ├── 📁 admin/                 ── Funcionalidades administrativas
+│   │   ├── 📁 auth/                  ── Autenticação e autorização
+│   │   │   ├── 📄 app.py            ── Configuração do módulo auth
+│   │   │   ├── 📄 models.py          ── Modelos de dados do auth
+│   │   │   ├── 📄 paths.py           ── Definição das rotas auth
+│   │   │   ├── 📄 supabase_auth.py   ── Integração com Supabase Auth
+│   │   │   └── 📄 views.py           ── Views e handlers do auth
+│   │   └── 📁 wallet/                ── Gestão de carteiras e transações
+│   ├── 📁 core/                      ── Configurações centrais
+│   │   ├── 📄 config.py              ── Configurações da aplicação
+│   │   └── 📄 cors_middleware.py     ── Middleware CORS
+│   ├── 📁 db/                        ── Configuração e migrações do banco
+│   │   ├── 📄 database.py            ── Conexão com banco de dados
+│   │   ├── 📄 init_db.py             ── Inicialização do banco
+│   │   └── 📄 sqlmodel_db.py         ── Configuração SQLModel
+│   ├── 📁 integrations/              ── Integrações com APIs externas
+│   │   ├── 📄 app.py                 ── Configuração do módulo
+│   │   ├── 📄 models.py              ── Modelos das integrações
+│   │   ├── 📄 paths.py               ── Rotas das integrações
+│   │   └── 📄 views.py               ── Views das integrações
+│   ├── 📁 models/                    ── Schemas e modelos de dados
+│   ├── 📁 services/                  ── Regras de negócio
+│   └── 📁 __pycache__/               ── Arquivos compilados Python
+├── 📁 scripts/                       ── Scripts utilitários
+│   ├── 📄 create_user.py             ── Criação de usuários
+│   └── 📄 login.py                   ── Script de login
+├── 📁 tests/                         ── Testes automatizados
+│   └── 📄 test_auth.py               ── Testes de autenticação
+├── 📄 main.py                        ── Ponto de entrada da aplicação
+├── 📄 requirements.txt               ── Dependências Python
+├── 📄 Dockerfile                     ── Configuração para containerização
+├── 📄 README.md                      ── Documentação específica do backend
+└── 📄 test.db                        ── Banco de dados SQLite para testes
 ```
 
 ### Justificativas das Adições
@@ -315,26 +372,82 @@ A aplicação frontend será desenvolvida utilizando React com Next.js e TypeScr
 
 ### Tecnologias Principais
 
-*   **React + Next.js:** Framework principal para construção da interface de usuário.
+*   **React + Vite:** Framework principal para construção da interface de usuário com build tool moderno.
 *   **TypeScript:** Para tipagem estática e melhor experiência de desenvolvimento.
 *   **Tailwind CSS:** Framework CSS utilitário para estilização rápida e consistente.
+*   **shadcn/ui:** Biblioteca de componentes UI reutilizáveis e acessíveis.
+*   **React Router:** Para gerenciamento de rotas single-page application.
 *   **Axios:** Para comunicação com APIs REST.
 *   **Recharts:** Para visualização de dados e gráficos.
 
 ### Estrutura de Componentes
 
 ```
-📁 src/
-├── 📁 components/              ── Componentes React reutilizáveis
-│   ├── 📁 common/              ── Componentes compartilhados
-│   ├── 📁 forms/               ── Formulários da aplicação
-│   └── 📁 dashboard/           ── Componentes do painel
-├── 📁 pages/                   ── Páginas Next.js (roteamento)
-│   └── 📁 investments/         ── Páginas de investimentos
-├── 📁 hooks/                   ── Custom hooks React
-├── 📁 services/                ── Cliente de API e serviços
-├── 📁 types/                   ── Tipos TypeScript
-└── 📁 utils/                   ── Utilitários e formatadores
+📁 qinvest-frontend/
+├── 📁 src/                           ── Código fonte da aplicação
+│   ├── 📁 components/                ── Componentes React reutilizáveis
+│   │   ├── 📁 auth/                  ── Componentes de autenticação
+│   │   │   └── 📄 ProtectedRoute.tsx ── Rota protegida por autenticação
+│   │   ├── 📁 company/               ── Componentes relacionados a empresas
+│   │   │   ├── 📄 AddCompanyDialog.tsx
+│   │   │   └── 📄 [outros componentes de empresa]
+│   │   ├── 📁 investment/            ── Componentes de investimentos
+│   │   │   ├── 📄 AddOpportunityDialog.tsx
+│   │   │   ├── 📄 CardInvestimento.tsx
+│   │   │   ├── 📄 CardOportunidade.tsx
+│   │   │   ├── 📄 FiltersPanel.tsx
+│   │   │   ├── 📄 GraphBar.tsx
+│   │   │   ├── 📄 InvestmentDialog.tsx
+│   │   │   ├── 📄 SearchBar.tsx
+│   │   │   └── 📄 WalletSummary.tsx
+│   │   ├── 📁 layout/                ── Componentes de layout
+│   │   │   ├── 📄 DashboardLayout.tsx
+│   │   │   ├── 📄 footer.tsx
+│   │   │   └── 📄 header.tsx
+│   │   └── 📁 ui/                    ── Componentes base da UI (shadcn/ui)
+│   │       ├── 📄 [múltiplos componentes básicos]
+│   │       └── 📄 [button, card, dialog, etc.]
+│   ├── 📁 contexts/                  ── Contextos React para estado global
+│   │   ├── 📄 AuthContext.tsx        ── Gerenciamento de autenticação
+│   │   └── 📄 CompanyContext.tsx     ── Gerenciamento de dados de empresa
+│   ├── 📁 data/                      ── Dados mock e constantes
+│   │   └── 📄 mockData.ts            ── Dados de exemplo para desenvolvimento
+│   ├── 📁 hooks/                     ── Custom hooks React
+│   │   ├── 📄 use-mobile.tsx         ── Hook para detectar dispositivos móveis
+│   │   ├── 📄 use-toast.ts           ── Hook para notificações toast
+│   │   └── 📄 useWallet.ts           ── Hook para gerenciamento de carteira
+│   ├── 📁 lib/                       ── Utilitários e configurações
+│   │   └── 📄 utils.ts               ── Funções utilitárias gerais
+│   ├── 📁 pages/                     ── Páginas da aplicação
+│   │   ├── 📄 CompanyDetail.tsx      ── Detalhes da empresa
+│   │   ├── 📄 CreditRequest.tsx      ── Solicitação de crédito
+│   │   ├── 📄 Dashboard.tsx          ── Dashboard principal
+│   │   ├── 📄 Index.tsx              ── Página inicial
+│   │   ├── 📄 Landing.tsx            ── Landing page
+│   │   ├── 📄 Login.tsx              ── Página de login
+│   │   ├── 📄 MeusInvestimentos.tsx  ── Lista de investimentos do usuário
+│   │   ├── 📄 MinhaEmpresa.tsx       ── Gestão da empresa do usuário
+│   │   ├── 📄 NotFound.tsx           ── Página 404
+│   │   ├── 📄 Opportunities.tsx      ── Oportunidades de investimento
+│   │   ├── 📄 Register.tsx           ── Página de cadastro
+│   │   ├── 📄 Settings.tsx           ── Configurações do usuário
+│   │   └── 📄 Wallet.tsx             ── Carteira digital
+│   ├── 📁 services/                  ── Cliente de API e serviços
+│   │   ├── 📄 api.ts                 ── Configuração da API
+│   │   └── 📄 wallets.ts             ── Serviços relacionados à carteira
+│   ├── 📄 App.tsx                    ── Componente principal da aplicação
+│   ├── 📄 App.css                    ── Estilos globais da aplicação
+│   └── 📄 main.tsx                   ── Ponto de entrada da aplicação
+├── 📁 public/                        ── Arquivos estáticos públicos
+│   ├── 📄 placeholder.svg            ── Imagem placeholder
+│   └── 📄 robots.txt                 ── Arquivo robots.txt
+├── 📁 node_modules/                  ── Dependências instaladas
+├── 📄 package.json                   ── Configurações e dependências
+├── 📄 vite.config.ts                 ── Configuração do Vite
+├── 📄 tailwind.config.ts             ── Configuração do Tailwind CSS
+├── 📄 tsconfig.json                  ── Configuração do TypeScript
+├── 📄 eslint.config.js               ── Configuração do ESLint
+└── 📄 index.html                     ── Arquivo HTML principal
 ```
 
 ## 6. Visão Geral da Arquitetura
@@ -469,12 +582,35 @@ def calculate_score(user_data):
 *   Criptografia de dados sensíveis em conformidade com a LGPD.
 *   Logs de auditoria de cada requisição feita à Qi Tech.
 
-## 8. Estratégia de Deploy
+## 8. Estratégia de Deploy e Ferramentas de Desenvolvimento
 
-### Deploy 
+### Deploy (Escalável já no mvp)
 
-*   **Backend (FastAPI):** Será hospedado no **Google Cloud Run**, uma plataforma de deploy que oferece facilidade de uso e integração contínua para aplicações baseadas em contêineres.
-*   **Frontend (React/Next.js):** Será deployado na **Vercel**, conhecida por sua performance e otimização para aplicações Next.js, além de oferecer deploy contínuo a partir do repositório de código.
-*   **Banco de Dados (Supabase):** Utilizará o serviço gerenciado **Supabase**, que oferece uma solução robusta e escalável com funcionalidades adicionais como autenticação e APIs em tempo real.
+*   **Backend (FastAPI):** Hospedado no **Google Cloud Run**, oferecendo facilidade de uso, integração contínua e escalabilidade automática baseada em contêineres Docker.
+*   **Frontend (React/Vite):** Deployado na **Vercel**, plataforma otimizada para aplicações React/Vite com deploy contínuo, CDN global e excelente performance.
+*   **Banco de Dados (Supabase):** Utiliza PostgreSQL gerenciado pelo **Supabase**, oferecendo autenticação integrada, APIs em tempo real, backup automático e painel administrativo.
+
+### Ferramentas de Desenvolvimento
+
+*   **Backend:**
+    *   **FastAPI:** Framework web moderno e rápido para construção de APIs
+    *   **SQLModel:** ORM para modelagem de dados e migrações automáticas
+    *   **Docker:** Containerização para ambientes consistentes
+    *   **Supabase:** Banco de dados com várias integrações
+
+*   **Frontend:**
+    *   **Vite:** Build tool rápido e moderno para desenvolvimento
+    *   **React 18:** Biblioteca para construção de interfaces de usuário
+    *   **TypeScript:** Tipagem estática para maior confiabilidade
+    *   **Tailwind CSS:** Framework CSS utilitário para estilização
+    *   **shadcn/ui:** Componentes UI reutilizáveis e acessíveis
+    *   **ESLint:** Linting para qualidade de código
+
+*   **Ferramentas Comuns:**
+    *   **Git:** Controle de versão distribuído
+    *   **Visual Studio Code/Cursor:** IDE para desenvolvimento
+    *   **Postman:** Testes e documentação de APIs
+    *   **Lovable:** Assistente de IA para geração de código, documentação e automação de tarefas repetitivas.
+    *   **GitHub Copilot:** Ferramenta de autocompletar código baseada em IA, acelerando o desenvolvimento e sugerindo soluções inteligentes.
 
 
